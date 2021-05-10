@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.btn_browse.setText(_translate("MainWindow", "Open File"))
-        self.btn_run.setText(_translate("MainWindow", "Run"))
+        self.btn_run.setText(_translate("MainWindow", "Recognize"))
 
     def open_dialog_box(self):
         filename = QFileDialog.getOpenFileName()
@@ -109,6 +109,14 @@ class Ui_MainWindow(object):
 
     def format_img2(self, path=''):
         img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
+        imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret, thresh = cv2.threshold(imgray, 127, 255, 0)
+        contours, hierarchy = cv2.findContours(
+            thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        cv2.drawContours(img, contours, -1, (0, 255, 0), 3)
+
         img = cv2.bitwise_not(img, mask=None)
         img = cv2.resize(img, (28, 28))
         im2arr = np.array(img)
